@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+require 'rubydns'
+require 'rubydns/system'
+require 'engineyard-metadata'
+
+require 'rexec'
+require 'rexec/daemon'
+
+require './lib/ey_environment'
+require './lib/server'
+
+raise 'EY_CLOUD_TOKEN must be defined' unless ENV['EY_CLOUD_TOKEN']
+
+# EM.set_descriptor_table_size(4096)
+EY.metadata.ey_cloud_token = ENV['EY_CLOUD_TOKEN']
+
+if RExec.current_user != "root"
+  $stderr.puts "Sorry, this command needs to be run as root!"
+  exit 1
+end
+
+Server.daemonize
+# Server.run
